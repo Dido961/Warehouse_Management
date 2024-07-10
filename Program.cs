@@ -138,6 +138,7 @@ namespace Dido_Summer
                             foreach (var supp in suppliers)
                             {
                                 //Console.WriteLine($"|| {supp.SupplierID}\t| {supp.SupplierName,-30}\t| {supp.ContactInfo,-30} ||");
+
                                 Console.Write("||");
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.Write($" {supp.SupplierID}\t");
