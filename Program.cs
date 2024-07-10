@@ -34,13 +34,15 @@ namespace Dido_Summer
                     Console.WriteLine("13} Add Warehouse");
                     Console.WriteLine("14} View Warehouse");
                     Console.WriteLine("15} Update Warehouse");
-                    Console.WriteLine("16} Delete Warehouse");
+                    Console.WriteLine("16} Delete Warehouse");/*
                     Console.WriteLine("17} Add Inventory");
                     Console.WriteLine("18} View Inventory");
                     Console.WriteLine("19} Update Inventory");
-                    Console.WriteLine("20} Delete Inventory");
+                    Console.WriteLine("20} Delete Inventory");*/
                     Console.WriteLine("0 } Exit");
+                    Console.ForegroundColor= ConsoleColor.Green;
                     Console.Write("Select an option: ");
+                    Console.ResetColor();
                     var option = Console.ReadLine();
 
                     switch (option)
@@ -189,11 +191,28 @@ namespace Dido_Summer
                             Console.Write("Enter Item Name: ");
                             Console.ResetColor();
                             var itemName = Console.ReadLine();
+                            Console.ForegroundColor = ConsoleColor.Green;
                             Console.Write("Enter Category ID: ");
+                            Console.ResetColor();
                             categoryId = int.Parse(Console.ReadLine());
-                            Console.Write("Enter Supplier ID: "); // Added supplier ID input
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.Write("Enter Supplier ID: ");
+                            Console.ResetColor();
                             var supplierID = int.Parse(Console.ReadLine());
-                            repo.AddItem(new Item { ItemName = itemName, CategoryID = categoryId, SupplierID = supplierID });
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.Write("Enter Warehouse ID: ");
+                            Console.ResetColor();
+                            var warehouseId = int.Parse(Console.ReadLine());
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.Write("Enter Quantity: ");
+                            Console.ResetColor();
+                            var quantity = int.Parse(Console.ReadLine());
+
+                            var item = new Item { ItemName = itemName, CategoryID = categoryId, SupplierID = supplierID };
+                            repo.AddItem(item);
+
+                            var newItem = repo.GetAllItems().Last();
+                            repo.AddInventory(new Inventory { WarehouseID = warehouseId, ItemID = newItem.ItemID, Quantity = quantity });
                             break;
                         case "10":
                             var items = repo.GetAllItems();
@@ -261,36 +280,60 @@ namespace Dido_Summer
                             }
                             Console.WriteLine("||<====================================================================================================================>||");
                             break;
+
                         case "11":
                             Console.ForegroundColor = ConsoleColor.Green;
                             Console.Write("Enter Item ID: ");
                             Console.ResetColor();
                             var itemId = int.Parse(Console.ReadLine());
-                            var item = repo.GetItem(itemId);
-                            if (item != null)
+                            var itemToUpdate = repo.GetItem(itemId);
+                            if (itemToUpdate != null)
                             {
+                                // Delete previous inventory entries
+                                var inventoriesToDelete = context.Inventories.Where(i => i.ItemID == itemId).ToList();
+                                context.Inventories.RemoveRange(inventoriesToDelete);
+                                context.SaveChanges();
+                                Console.ForegroundColor= ConsoleColor.Green;
                                 Console.Write("Enter new Item Name: ");
+                                Console.ResetColor();
                                 itemName = Console.ReadLine();
+                                Console.ForegroundColor = ConsoleColor.Green;
                                 Console.Write("Enter new Category ID: ");
+                                Console.ResetColor();
                                 categoryId = int.Parse(Console.ReadLine());
+                                Console.ForegroundColor = ConsoleColor.Green;
                                 Console.Write("Enter new Supplier ID: ");
+                                Console.ResetColor();
                                 supplierID = int.Parse(Console.ReadLine());
-                                item.ItemName = itemName;
-                                item.CategoryID = categoryId;
-                                item.SupplierID = supplierID;
-                                repo.UpdateItem(item);
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.Write("Enter new Warehouse ID: ");
+                                Console.ResetColor();
+                                warehouseId = int.Parse(Console.ReadLine());
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.Write("Enter new Quantity: ");
+                                Console.ResetColor();
+                                quantity = int.Parse(Console.ReadLine());
+
+                                itemToUpdate.ItemName = itemName;
+                                itemToUpdate.CategoryID = categoryId;
+                                itemToUpdate.SupplierID = supplierID;
+                                repo.UpdateItem(itemToUpdate);
+
+                                // Add new inventory entry
+                                repo.AddInventory(new Inventory { WarehouseID = warehouseId, ItemID = itemToUpdate.ItemID, Quantity = quantity });
                             }
                             else
                             {
                                 Console.WriteLine("Item not found");
                             }
                             break;
+
                         case "12":
                             Console.ForegroundColor = ConsoleColor.Green;
                             Console.Write("Enter Item ID: ");
                             Console.ResetColor();
-                            itemId = int.Parse(Console.ReadLine());
-                            repo.DeleteItem(itemId);
+                            var AitemId = int.Parse(Console.ReadLine());
+                            repo.DeleteItem(AitemId);
                             break;
 
                         case "13":
@@ -345,13 +388,17 @@ namespace Dido_Summer
                             Console.ForegroundColor = ConsoleColor.Green;
                             Console.Write("Enter Warehouse ID: ");
                             Console.ResetColor();
-                            var warehouseId = int.Parse(Console.ReadLine());
-                            var warehouse = repo.GetWarehouse(warehouseId);
+                            var AnwarehouseId = int.Parse(Console.ReadLine());
+                            var warehouse = repo.GetWarehouse(AnwarehouseId);
                             if (warehouse != null)
                             {
+                                Console.ForegroundColor= ConsoleColor.Green;
                                 Console.Write("Enter new Warehouse Name: ");
+                                Console.ResetColor();
                                 warehouseName = Console.ReadLine();
+                                Console.ForegroundColor=ConsoleColor.Green;
                                 Console.Write("Enter new Location: ");
+                                Console.ResetColor();
                                 location = Console.ReadLine();
                                 warehouse.WarehouseName = warehouseName;
                                 warehouse.Location = location;
@@ -369,7 +416,7 @@ namespace Dido_Summer
                             warehouseId = int.Parse(Console.ReadLine());
                             repo.DeleteWarehouse(warehouseId);
                             break;
-
+                            /*
                         case "17":
                             Console.ForegroundColor = ConsoleColor.Green;
                             Console.Write("Enter Warehouse ID: ");
@@ -382,8 +429,8 @@ namespace Dido_Summer
                             Console.ForegroundColor = ConsoleColor.Green;
                             Console.Write("Enter Quantity: ");
                             Console.ResetColor();
-                            var quantity = int.Parse(Console.ReadLine());
-                            repo.AddInventory(new Inventory { WarehouseID = warehouseId, ItemID = itemId, Quantity = quantity });
+                            var Anquantity = int.Parse(Console.ReadLine());
+                            repo.AddInventory(new Inventory { WarehouseID = warehouseId, ItemID = itemId, Quantity = Anquantity });
                             break;
                         case "18":
                             Console.ForegroundColor = ConsoleColor.Green;
@@ -438,7 +485,7 @@ namespace Dido_Summer
                             Console.ResetColor();
                             itemId = int.Parse(Console.ReadLine());
                             repo.DeleteInventory(warehouseId, itemId);
-                            break;
+                            break;*/
 
                         case "0":
                             return;
@@ -447,6 +494,11 @@ namespace Dido_Summer
                             Console.WriteLine("Invalid option");
                             break;
                     }
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Press Enter to continue...");
+                    Console.ResetColor();
+                    Console.ReadLine();
+                    Console.Clear();
                 }
             }
         }
