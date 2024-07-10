@@ -12,7 +12,7 @@ namespace Dido_Summer
         static void Main(string[] args)
         {
             var repo = new WarehouseRepository();
-            using (var context = new WarehouseContext()) // Added context here
+            using (var context = new WarehouseContext())
             {
                 while (true)
                 {
@@ -289,7 +289,6 @@ namespace Dido_Summer
                             var itemToUpdate = repo.GetItem(itemId);
                             if (itemToUpdate != null)
                             {
-                                // Delete previous inventory entries
                                 var inventoriesToDelete = context.Inventories.Where(i => i.ItemID == itemId).ToList();
                                 context.Inventories.RemoveRange(inventoriesToDelete);
                                 context.SaveChanges();
@@ -319,7 +318,6 @@ namespace Dido_Summer
                                 itemToUpdate.SupplierID = supplierID;
                                 repo.UpdateItem(itemToUpdate);
 
-                                // Add new inventory entry
                                 repo.AddInventory(new Inventory { WarehouseID = warehouseId, ItemID = itemToUpdate.ItemID, Quantity = quantity });
                             }
                             else

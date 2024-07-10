@@ -122,7 +122,7 @@ namespace Dido_Summer.CRUD_ops
             using (var context = new WarehouseContext())
             {
                 return context.Items.Include(i => i.Category)
-                                    .Include(i => i.Supplier) // Include Supplier for referencing supplier property
+                                    .Include(i => i.Supplier) 
                                     .ToList();
             }
         }
@@ -140,7 +140,6 @@ namespace Dido_Summer.CRUD_ops
         {
             using (var context = new WarehouseContext())
             {
-                // Find and delete related inventories
                 var inventories = context.Inventories.Where(i => i.ItemID == itemId).ToList();
                 if (inventories.Any())
                 {
@@ -148,7 +147,6 @@ namespace Dido_Summer.CRUD_ops
                     context.SaveChanges();
                 }
 
-                // Find and delete the item
                 var item = context.Items.Find(itemId);
                 if (item != null)
                 {
